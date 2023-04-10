@@ -14,7 +14,6 @@
 
   onMount(() => {
     intervalId = setInterval(updateCount, frequency);
-    console.log(text);
   });
 
   onDestroy(() => {

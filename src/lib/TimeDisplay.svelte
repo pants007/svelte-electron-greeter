@@ -20,7 +20,6 @@
 
 <style>
   .timestamp {
-    font-size: 1.2em;
     font-weight: bold;
     margin-right: auto;
   }
