@@ -1,9 +1,11 @@
 <script>
   import { onMount, onDestroy } from "svelte";
 
-  let text = new Date().toTimeString();
+  let timestamp = new Date().toTimeString();
+  let datestamp = new Date().toDateString();
   function updateTime() {
-    text = new Date().toTimeString();
+    timestamp = new Date().toTimeString();
+    datestamp = new Date().toDateString();
   }
   let intervalId;
 
@@ -16,11 +18,12 @@
   });
 </script>
 
-<p class="timestamp">{text}</p>
+<p class="timestamp">{datestamp}</p>
+<p class="timestamp">{timestamp}</p>
 
 <style>
   .timestamp {
+    height: 10px;
     font-weight: bold;
-    margin-right: auto;
   }
 </style>

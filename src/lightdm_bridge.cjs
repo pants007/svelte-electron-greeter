@@ -1,15 +1,35 @@
 const gi = require('node-gtk');
+const fs = require('fs');
 const LightDM = gi.require('LightDM', '1');
 
+const LightDMGreeter = new LightDM.Greeter();
+const userList = new LightDM.UserList();
+try {
+  //LightDMGreeter.setResettable(true);
+  LightDMGreeter.connectToDaemonSync();
+
+} catch (exception) {
+  console.log(exception)
+};
+
 function getUsers() {
-  const userList = new LightDM.UserList()
   return userList.getUsers().map((user) => {
+    let dataDir = LightDMGreeter.ensureSharedDataDirSync(user.name);
+    let imagePath = user.getImage();
+    let image;
+    if (fs.existsSync(imagePath)) {
+      let imageData = fs.readFileSync(imagePath);
+      let base64Image = imageData.toString('base64');
+      image = "data:image;base64,".concat(base64Image);
+    } else {
+
+    }
     return {
       'name': user.getName(),
       'realName': user.getRealName(),
       'displayName': user.getDisplayName(),
       'homeDirectory': user.getHomeDirectory(),
-      'image': user.getImage(),
+      'image': image,
       'background': user.getBackground(),
       'language': user.getLanguage(),
       'layout': user.getLayout(),
@@ -44,24 +64,21 @@ function getSessions() {
 }
 function shutdown() {
   if (LightDM.getCanShutdown()) {
-    console.log('now i would shut down the system')
-    // LightDM.shutdown()
+    LightDM.shutdown()
   } else {
     console.log('error! not authorized to perform a system shutdown')
   }
 }
 function suspend() {
   if (LightDM.getCanSuspend()) {
-    console.log('now i would suspend the system')
-    // LightDM.suspend()
+    LightDM.suspend()
   } else {
     console.log('error! not authorized to perform a system suspend')
   }
 }
 function restart() {
   if (LightDM.getCanRestart()) {
-    console.log('now i would restart the system')
-    // LightDM.restart()
+    LightDM.restart()
   } else {
     console.log('error! not authorized to perform a system restart')
   }
@@ -69,8 +86,7 @@ function restart() {
 
 function hibernate() {
   if (LightDM.getCanHibernate()) {
-    console.log('now i would hibernate the system')
-    // LightDM.hibernate()
+    LightDM.hibernate()
   } else {
     console.log('error! not authorized to perform a system hibernation')
   }
@@ -83,7 +99,8 @@ function getExtras() {
     'osId': LightDM.getOsId()
   }
 }
-module.exports = { getUsers, getSessions, getLanguages }
+
+module.exports = { getUsers, getSessions, getLanguages, shutdown, restart, hibernate, suspend }
 // [Object: null prototype] {
 //   GREETER_SIGNAL_AUTHENTICATION_COMPLETE: 'authentication-complete',
 //   GREETER_SIGNAL_AUTOLOGIN_TIMER_EXPIRED: 'autologin-timer-expired',

@@ -1,14 +1,5 @@
 <script>
-  import { onMount } from "svelte";
-  let sessions = [];
-  export let value;
-
-  onMount(async () => {
-    const response = await fetch("http://localhost:3002/api/sessions");
-    let temp = JSON.parse(await response.text());
-    sessions = sessions.concat(temp);
-    value = sessions[0];
-  });
+  export let sessions = [];
 </script>
 
 <select class="select-user">

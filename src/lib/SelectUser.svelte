@@ -1,14 +1,6 @@
 <script>
-  import { onMount } from "svelte";
-  let users = [{ name: "sweatlord" }];
-  export let value;
-
-  onMount(async () => {
-    const response = await fetch("http://localhost:3002/api/users");
-    let temp = JSON.parse(await response.text());
-    users = users.concat(temp);
-    value = users[0];
-  });
+  export let users = [{ name: "sweatlord" }];
+  export let value = users[0];
 </script>
 
 <select class="select-user" bind:value>

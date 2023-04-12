@@ -1,26 +1,37 @@
 <script>
+  import { onMount } from "svelte";
+  import store, { setUsers, setSessions } from "./store";
+  import RGBBackground from "./lib/RGBBackground.svelte";
   import RepeatingPeriods from "./lib/RepeatingPeriods.svelte";
   import TimeDisplay from "./lib/TimeDisplay.svelte";
   import RevealingText from "./lib/RevealingText.svelte";
   import LoginForm from "./lib/LoginForm.svelte";
-  import SessionPicker from "./lib/SessionPicker.svelte";
+  import PowerMenu from "./lib/PowerMenu.svelte";
+  import ThreeDee from "./lib/ThreeDee.svelte";
   let show_periods = false;
-  let picked_session;
+
   function showPeriods() {
     show_periods = true;
   }
+  onMount(async () => {
+    // at some point, the fetches will be replaced by ipcmain/ipcrenderer calls
+    let users_response = await fetch("http://localhost:3002/api/users");
+    let users = JSON.parse(await users_response.text()).data;
+    let sessions_response = await fetch("http://localhost:3002/api/sessions");
+    let sessions = JSON.parse(await sessions_response.text()).data;
+    setUsers(users);
+    setSessions(sessions);
+  });
 </script>
 
 <header class="greeter-header">
-  <div class="outer-bar">
-    <div class="inner-bar-left">
-      <TimeDisplay />
-    </div>
-    <div class="dummy-element" />
-    <div class="inner-bar-right">
-      <button class="button">⏻</button>
-    </div>
+  <div class="inner-header-left">
+    <PowerMenu />
   </div>
+  <div class="inner-header-middle">
+    <TimeDisplay />
+  </div>
+  <div class="inner-header-right" />
 </header>
 <main>
   <div class="default">
@@ -30,42 +41,47 @@
         <RepeatingPeriods />
       {/if}
     </p>
+
     <LoginForm />
-    <SessionPicker bind:value={picked_session} />
   </div>
 </main>
+<RGBBackground />
 
 <style>
-  .dummy-element {
-    width: 33%;
-  }
   .cool-text {
+    height: 80px;
     font-size: 50px;
+    color: black;
   }
   .greeter-header {
-    background-color: none;
+    background-color: transparent;
     color: #222;
-    padding: 5px;
+    padding: 0px;
     position: fixed;
-    max-height: 50px;
+    height: auto;
     top: 0;
     left: 0;
     right: 0;
     z-index: 9999;
     font-family: Iosevka;
-  }
-  .outer-bar {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
   }
-  .inner-bar-left {
+  .inner-header-left {
     width: 33%;
     display: flex;
-    align-items: left;
+    flex-direction: column;
+    align-items: start;
   }
-  .inner-bar-right {
+  .inner-header-middle {
     width: 33%;
+  }
+  .inner-header-right {
+    width: 34%;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
   }
   .default {
     width: 400px;
@@ -73,16 +89,5 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  .button {
-    background-color: transparent;
-    font-family: Iosevka;
-    color: #888;
-    font-size: 50px;
-    padding: 0px;
-    margin-left: 0.5em;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
   }
 </style>
